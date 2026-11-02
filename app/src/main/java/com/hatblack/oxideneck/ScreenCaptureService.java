@@ -36,6 +36,7 @@ public final class ScreenCaptureService extends Service {
         projection.registerCallback(new MediaProjection.Callback(){@Override public void onStop(){stopSelf();}},null);
         android.util.DisplayMetrics dm=getResources().getDisplayMetrics();
         reader=ImageReader.newInstance(dm.widthPixels,dm.heightPixels,android.graphics.PixelFormat.RGBA_8888,2);
+        reader.setOnImageAvailableListener(source->{android.media.Image frame=source.acquireLatestImage();if(frame!=null)frame.close();},null);
         display=projection.createVirtualDisplay("OxideNeckCapture",dm.widthPixels,dm.heightPixels,dm.densityDpi,
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,reader.getSurface(),null,null);
         return START_NOT_STICKY;
