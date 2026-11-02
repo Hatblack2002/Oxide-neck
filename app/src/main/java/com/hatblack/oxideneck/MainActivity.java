@@ -203,9 +203,9 @@ public final class MainActivity extends Activity {
     }
 
     private void compareSamples() {
-        JSONArray samples = new JSONArray(measurements.exportJson());
-        if (samples.length() < 2) { toast("At least two saved samples are required"); return; }
         try {
+            JSONArray samples = new JSONArray(measurements.exportJson());
+            if (samples.length() < 2) { toast("At least two saved samples are required"); return; }
             Measurement first = fromJson(samples.getJSONObject(0));
             Measurement last = fromJson(samples.getJSONObject(samples.length() - 1));
             GeometryEngine.Metrics a = first.metrics(), b = last.metrics();
