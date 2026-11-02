@@ -211,9 +211,12 @@ public final class MainActivity extends Activity {
             GeometryEngine.Metrics a = first.metrics(), b = last.metrics();
             double difference = Math.abs(b.distancePx - a.distancePx);
             double percentage = a.distancePx == 0 ? 0 : difference / a.distancePx * 100.0;
+            double firstNormalized = Math.hypot(a.normalizedDx, a.normalizedDy);
+            double latestNormalized = Math.hypot(b.normalizedDx, b.normalizedDy);
             new AlertDialog.Builder(this).setTitle("First vs latest sample")
-                .setMessage(String.format(Locale.US, "First distance: %.2f px\nLatest distance: %.2f px\nAbsolute difference: %.2f px\nRelative difference: %.2f%%\nSamples stored: %d",
-                    a.distancePx, b.distancePx, difference, percentage, samples.length()))
+                .setMessage(String.format(Locale.US, "First distance: %.2f px (normalized %.5f)\\nLatest distance: %.2f px (normalized %.5f)\\nPixel delta: %.2f px (%.2f%%)\\nNormalized delta: %.5f\\nSamples stored: %d",
+                    a.distancePx, firstNormalized, b.distancePx, latestNormalized, difference, percentage,
+                    Math.abs(latestNormalized - firstNormalized), samples.length()))
                 .setPositiveButton("OK", null).show();
         } catch (JSONException e) { toast("History data is invalid"); }
     }
