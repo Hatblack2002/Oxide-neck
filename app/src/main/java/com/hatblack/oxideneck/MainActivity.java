@@ -182,7 +182,7 @@ public final class MainActivity extends Activity {
                 "Name: %s\nResolution: %d × %d\nReference A: %.4f, %.4f\nReference B: %.4f, %.4f\nSensitivity: %.3f\nFOV: %s\nActive: %s",
                 p.name, p.screenWidth, p.screenHeight, p.referenceX, p.referenceY, p.horizontalOffset,
                 p.verticalOffset, p.sensitivity, Double.isNaN(p.fovDegrees) ? "unknown" : p.fovDegrees + "°",
-                name.equals(active) ? "yes" : "no");
+                name.equals(active) ? "yes" : "no", comparison);
             new AlertDialog.Builder(this).setTitle("Calibration profile").setMessage(message)
                 .setPositiveButton("ACTIVATE", (d, w) -> { profiles.setActive(name); toast("Active profile: " + name); })
                 .setNeutralButton("DELETE", (d, w) -> new AlertDialog.Builder(this)
