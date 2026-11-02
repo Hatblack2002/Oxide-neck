@@ -22,7 +22,7 @@ public final class GeometryEngine {
         }
     }
     public static Metrics between(Point a, Point b, double width, double height) {
-        if (a==null || b==null || width<=0 || height<=0) throw new IllegalArgumentException("Invalid geometry input");
+        if (a==null || b==null || !Double.isFinite(width) || !Double.isFinite(height) || width<=0 || height<=0) throw new IllegalArgumentException("Invalid geometry input");
         return new Metrics(b.x-a.x,b.y-a.y,width,height);
     }
     /** Median filter for noisy manually sampled reference points. */
