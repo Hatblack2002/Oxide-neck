@@ -249,7 +249,7 @@ public final class MainActivity extends Activity {
     private void toast(String message) { Toast.makeText(this, message, Toast.LENGTH_LONG).show(); }
 
     private final class CalibrationCanvas extends View {
-        private final android.graphics.Paint paint = new android.graphics.Paint(Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
         private GeometryEngine.Point first, second;
         CalibrationCanvas() { super(MainActivity.this); setBackgroundColor(0xff1d2a35); }
         @Override protected void onDraw(android.graphics.Canvas c) {
