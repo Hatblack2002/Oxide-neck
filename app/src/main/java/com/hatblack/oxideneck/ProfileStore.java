@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** Persistent local profile CRUD. */
+/** Persistent local profile CRUD and active-profile selection. */
 public final class ProfileStore {
     private final SharedPreferences prefs;
     public ProfileStore(Context context) { prefs = context.getSharedPreferences("calibration_profiles", Context.MODE_PRIVATE); }
@@ -51,8 +51,22 @@ public final class ProfileStore {
             if (item != null && name.equals(item.optString("name"))) removed = true;
             else if (item != null) next.put(item);
         }
-        if (removed) prefs.edit().putString("profiles", next.toString()).apply();
+        if (removed) {
+            SharedPreferences.Editor editor = prefs.edit().putString("profiles", next.toString());
+            if (name.equals(getActiveName())) editor.remove("active_profile");
+            editor.apply();
+        }
         return removed;
+    }
+
+    public synchronized void setActive(String name) {
+        if (name != null && get(name) == null) throw new IllegalArgumentException("Unknown profile");
+        prefs.edit().putString("active_profile", name == null ? "" : name).apply();
+    }
+    public synchronized String getActiveName() { return prefs.getString("active_profile", ""); }
+    public synchronized CalibrationProfile getActive() {
+        String name = getActiveName();
+        return name.isEmpty() ? null : get(name);
     }
 
     private JSONObject toJson(CalibrationProfile p) throws Exception {
