@@ -3,6 +3,7 @@ package com.hatblack.oxideneck;
 import android.content.Context;
 import android.content.SharedPreferences;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /** Persistent local profile CRUD and active-profile selection. */
@@ -26,7 +27,10 @@ public final class ProfileStore {
         } catch (Exception e) { throw new IllegalStateException("Profile persistence failed", e); }
     }
 
-    public synchronized JSONArray all() { return new JSONArray(prefs.getString("profiles", "[]")); }
+    public synchronized JSONArray all() {
+        try { return new JSONArray(prefs.getString("profiles", "[]")); }
+        catch (JSONException e) { throw new IllegalStateException("Stored calibration profiles are malformed", e); }
+    }
 
     public synchronized CalibrationProfile get(String name) {
         JSONArray profiles = all();
@@ -69,7 +73,7 @@ public final class ProfileStore {
         return name.isEmpty() ? null : get(name);
     }
 
-    private JSONObject toJson(CalibrationProfile p) throws Exception {
+    private JSONObject toJson(CalibrationProfile p) throws JSONException {
         JSONObject o = new JSONObject();
         o.put("name", p.name); o.put("width", p.screenWidth); o.put("height", p.screenHeight);
         o.put("sensitivity", p.sensitivity); o.put("x", p.referenceX); o.put("y", p.referenceY);
