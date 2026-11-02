@@ -188,7 +188,7 @@ public final class MainActivity extends Activity {
                     (double) p.screenHeight / activeProfile.screenHeight);
             }
             String message = String.format(Locale.US,
-                "Name: %s\nResolution: %d × %d\nReference A: %.4f, %.4f\nReference B: %.4f, %.4f\nSensitivity: %.3f\nFOV: %s\nActive: %s",
+                "Name: %s\nResolution: %d × %d\nReference A: %.4f, %.4f\nReference B: %.4f, %.4f\nSensitivity: %.3f\nFOV: %s\nActive: %s%s",
                 p.name, p.screenWidth, p.screenHeight, p.referenceX, p.referenceY, p.horizontalOffset,
                 p.verticalOffset, p.sensitivity, Double.isNaN(p.fovDegrees) ? "unknown" : p.fovDegrees + "°",
                 name.equals(active) ? "yes" : "no", comparison);
