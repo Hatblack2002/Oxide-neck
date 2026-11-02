@@ -1,26 +1,24 @@
-# Oxide-neck
+# OXIDE-NECK
 
-Standalone Java 17 aim-calibration and visual-assistance engine for Android.
+Standalone Android screen-space calibration utility. This repository is developed independently and does not import code from the Oxide companion app.
 
-This repository is intentionally independent from the Oxide companion repository. It contains no copied source files or runtime dependencies from that project.
+## Implemented baseline
+- Android application (Java 17, min SDK 26, target SDK 34).
+- Manual two-point reference measurement with live pixel distance, signed displacement, angle and viewport-normalized coordinates.
+- Median coordinate stabilizer and calibration-error math in the geometry library.
+- Resolution scaling and explicit unknown-FOV representation in calibration profiles.
+- Bounded gesture measurement model (describes gestures; does not inject touch events).
+- Local bounded JSON measurement history.
+- JUnit tests and GitHub Actions build/test/APK artifact workflow.
 
-## Scope
+## Measurement model and limitations
+All distances are screen-space pixels or normalized viewport units. They are not anatomical distances or world-space metres. Real-world scale requires a known physical reference and camera calibration; FOV estimation requires camera intrinsics or a known angular reference. The app does not infer head/neck anatomy, select player hitboxes, track opponents, automate aiming, inject touch events, or evade game protections.
 
-- Manual camera and crosshair calibration
-- Screen-space geometry and target-independent visual distance estimation
-- Configurable sensitivity profiles
-- Safe, bounded touch-gesture planning for user-directed input
-- Resource-interaction timing primitives (user initiated; no unattended multiplayer bot)
-- JUnit 4 tests and GitHub Actions verification
-
-This project does not implement automatic player targeting, head/neck hitbox selection, recoil scripts, anti-cheat evasion, or unattended multiplayer farming.
+The current UI is an in-app manual calibration workspace. A system-wide floating overlay and live game-frame capture are not part of this baseline and are not claimed as implemented.
 
 ## Build
-
-Requires JDK 17.
-
+Requires JDK 17 and Android SDK platform 35:
 ```sh
-./gradlew clean test jar
+gradle clean testDebugUnitTest assembleDebug
 ```
-
-The build produces a standalone Java library JAR. Android integration is through the documented Java API; this baseline does not claim a device-tested APK.
+APK: `app/build/outputs/apk/debug/app-debug.apk`
