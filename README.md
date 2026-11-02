@@ -1,24 +1,29 @@
 # OXIDE-NECK
 
-Standalone Android screen-space calibration utility. This repository is developed independently and does not import code from the Oxide companion app.
+Independent Android screen-measurement and calibration utility. Java 17; min SDK 26; target SDK 34. No source is imported from the Oxide companion repository.
 
-## Implemented baseline
-- Android application (Java 17, min SDK 26, target SDK 34).
-- Manual two-point reference measurement with live pixel distance, signed displacement, angle and viewport-normalized coordinates.
-- Median coordinate stabilizer and calibration-error math in the geometry library.
-- Resolution scaling and explicit unknown-FOV representation in calibration profiles.
-- Bounded gesture measurement model (describes gestures; does not inject touch events).
-- Local bounded JSON measurement history.
-- JUnit tests and GitHub Actions build/test/APK artifact workflow.
+## Added in 0.2.0
+- Android MediaProjection consent flow and foreground capture session. Capture remains local; frames are not uploaded or interpreted for player recognition.
+- System-wide, non-touchable reference guide. It is explicitly pass-through and cannot intercept the game's touch input.
+- Persistent named calibration profiles in private SharedPreferences, including saved resolution and normalized reference coordinates.
+- Profile comparison against the current display resolution.
+- Repeatable geometry CPU microbenchmark.
+- Existing manual two-point screen-space measurements and local measurement history.
 
-## Measurement model and limitations
-All distances are screen-space pixels or normalized viewport units. They are not anatomical distances or world-space metres. Real-world scale requires a known physical reference and camera calibration; FOV estimation requires camera intrinsics or a known angular reference. The app does not infer head/neck anatomy, select player hitboxes, track opponents, automate aiming, inject touch events, or evade game protections.
+## Deliberate boundary
+Automatic character/head/neck recognition, anatomical landmark tracking, opponent tracking, automatic aim selection, and automated game input are not implemented. The guide is manually positioned and does not follow characters. This avoids turning a measurement utility into an automated targeting system.
 
-The current UI is an in-app manual calibration workspace. A system-wide floating overlay and live game-frame capture are not part of this baseline and are not claimed as implemented.
+## Measurement validity
+Measurements are pixels and normalized viewport coordinates, not physical anatomical distances or world-space metres. Physical scale requires a known reference; camera/FOV calibration requires camera intrinsics or a known angular reference. The included CPU benchmark is a repeatable microbenchmark, not a device thermal or sustained-frame-rate test.
+
+## Android permissions
+- Screen capture: Android's MediaProjection consent prompt is shown each session.
+- Floating guide: user must grant "Display over other apps" in Android settings.
+- The guide is non-touchable so touches pass through to the foreground app.
 
 ## Build
-Requires JDK 17 and Android SDK platform 35:
+JDK 17 and Android SDK platform 35:
 ```sh
-gradle clean testDebugUnitTest assembleDebug
+gradle --no-daemon clean testDebugUnitTest assembleDebug
 ```
-APK: `app/build/outputs/apk/debug/app-debug.apk`
+GitHub Actions builds the debug APK and publishes it as `oxide-neck-debug-apk`.
