@@ -21,23 +21,34 @@ public final class FrameArchive {
         Image.Plane plane = planes[0];
         int width = image.getWidth(), height = image.getHeight();
         int pixelStride = plane.getPixelStride(), rowStride = plane.getRowStride();
-        if (pixelStride < 4 || rowStride < pixelStride * width) throw new IllegalStateException("Unsupported image layout");
-        int paddedWidth = rowStride / pixelStride;
-        ByteBuffer buffer = plane.getBuffer();
-        buffer.rewind();
-        Bitmap padded = Bitmap.createBitmap(paddedWidth, height, Bitmap.Config.ARGB_8888);
-        padded.copyPixelsFromBuffer(buffer);
-        Bitmap cropped = Bitmap.createBitmap(padded, 0, 0, width, height);
+        if (width <= 0 || height <= 0 || pixelStride < 4 || rowStride < pixelStride * width)
+            throw new IllegalStateException("Unsupported image layout");
+
+        ByteBuffer source = plane.getBuffer().duplicate();
+        ByteBuffer rgba = ByteBuffer.allocate(width * height * 4);
+        for (int y = 0; y < height; y++) {
+            int row = y * rowStride;
+            for (int x = 0; x < width; x++) {
+                int pixel = row + x * pixelStride;
+                rgba.put(source.get(pixel));
+                rgba.put(source.get(pixel + 1));
+                rgba.put(source.get(pixel + 2));
+                rgba.put(source.get(pixel + 3));
+            }
+        }
+        rgba.flip();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(rgba);
+
         File dir = new File(context.getFilesDir(), "frames");
-        if (!dir.exists() && !dir.mkdirs()) throw new IllegalStateException("Cannot create frame directory");
+        if (!dir.exists() && !dir.mkdirs()) { bitmap.recycle(); throw new IllegalStateException("Cannot create frame directory"); }
         String stamp = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US).format(new Date());
         File target = new File(dir, "frame_" + stamp + ".jpg");
         try (FileOutputStream out = new FileOutputStream(target)) {
-            if (!cropped.compress(Bitmap.CompressFormat.JPEG, 92, out)) throw new IllegalStateException("JPEG encode failed");
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 92, out)) throw new IllegalStateException("JPEG encode failed");
             out.flush();
         } finally {
-            if (cropped != padded) cropped.recycle();
-            padded.recycle();
+            bitmap.recycle();
         }
         prune(dir);
         return target;
