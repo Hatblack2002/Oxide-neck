@@ -178,6 +178,15 @@ public final class MainActivity extends Activity {
             CalibrationProfile p = profiles.get(name);
             if (p == null) { toast("Profile could not be loaded"); return; }
             String active = profiles.getActiveName();
+            CalibrationProfile activeProfile = profiles.getActive();
+            String comparison = "";
+            if (activeProfile != null && !name.equals(activeProfile.name)) {
+                double deltaA = Math.hypot(p.referenceX - activeProfile.referenceX, p.referenceY - activeProfile.referenceY);
+                double deltaB = Math.hypot(p.horizontalOffset - activeProfile.horizontalOffset, p.verticalOffset - activeProfile.verticalOffset);
+                comparison = String.format(Locale.US, "\nCompared with active %s:\nReference A delta %.5f\nReference B delta %.5f\nResolution ratio %.4f × %.4f",
+                    activeProfile.name, deltaA, deltaB, (double) p.screenWidth / activeProfile.screenWidth,
+                    (double) p.screenHeight / activeProfile.screenHeight);
+            }
             String message = String.format(Locale.US,
                 "Name: %s\nResolution: %d × %d\nReference A: %.4f, %.4f\nReference B: %.4f, %.4f\nSensitivity: %.3f\nFOV: %s\nActive: %s",
                 p.name, p.screenWidth, p.screenHeight, p.referenceX, p.referenceY, p.horizontalOffset,
