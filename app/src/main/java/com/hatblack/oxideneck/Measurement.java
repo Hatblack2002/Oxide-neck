@@ -8,7 +8,9 @@ public final class Measurement {
     public final long timestamp;
     public final double x1,y1,x2,y2,width,height;
     public Measurement(long timestamp,double x1,double y1,double x2,double y2,double width,double height) {
-        if(!Double.isFinite(width) || !Double.isFinite(height) || width<=0 || height<=0 ||\n            !Double.isFinite(x1) || !Double.isFinite(y1) || !Double.isFinite(x2) || !Double.isFinite(y2))\n            throw new IllegalArgumentException("Invalid measurement coordinates or viewport");
+        if(!Double.isFinite(width) || !Double.isFinite(height) || width<=0 || height<=0 ||
+            !Double.isFinite(x1) || !Double.isFinite(y1) || !Double.isFinite(x2) || !Double.isFinite(y2))
+            throw new IllegalArgumentException("Invalid measurement coordinates or viewport");
         this.timestamp=timestamp;this.x1=x1;this.y1=y1;this.x2=x2;this.y2=y2;this.width=width;this.height=height;
     }
     public GeometryEngine.Metrics metrics(){
